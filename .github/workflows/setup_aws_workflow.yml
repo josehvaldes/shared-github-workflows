@@ -1,0 +1,35 @@
+name: Environment setup workflow
+
+on:
+  workflow_call:
+    inputs:
+      node_version:
+        description: 'Node version to use'
+        required: true
+        type: string
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node_version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Create .env.production file
+        run: |
+          touch .env.production
+          echo "VITE_ENABLE_MOCKS=false" >> .env.production
+      - name: Show Node Version
+        run: |
+          node --version
+          npm --version
+
